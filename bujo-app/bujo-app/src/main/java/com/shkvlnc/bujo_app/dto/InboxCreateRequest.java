@@ -6,7 +6,7 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data
-public class TaskCreateRequest {
+public class InboxCreateRequest {
     @NotBlank
     private String title;
 

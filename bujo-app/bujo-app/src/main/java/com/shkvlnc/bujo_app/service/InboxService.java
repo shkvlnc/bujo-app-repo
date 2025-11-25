@@ -3,13 +3,13 @@ package com.shkvlnc.bujo_app.service;
 
 import com.shkvlnc.bujo_app.domain.Context;
 import com.shkvlnc.bujo_app.domain.Project;
-import com.shkvlnc.bujo_app.domain.Task;
-import com.shkvlnc.bujo_app.dto.TaskCreateRequest;
-import com.shkvlnc.bujo_app.dto.TaskResponse;
-import com.shkvlnc.bujo_app.dto.TaskUpdateRequest;
+import com.shkvlnc.bujo_app.domain.Inbox;
+import com.shkvlnc.bujo_app.dto.InboxCreateRequest;
+import com.shkvlnc.bujo_app.dto.InboxResponse;
+import com.shkvlnc.bujo_app.dto.InboxUpdateRequest;
 import com.shkvlnc.bujo_app.repository.ContextRepository;
 import com.shkvlnc.bujo_app.repository.ProjectRepository;
-import com.shkvlnc.bujo_app.repository.TaskRepository;
+import com.shkvlnc.bujo_app.repository.InboxRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,27 +20,33 @@ import java.util.Optional;
 
 @Service
 @Transactional
-public class TaskService {
-    private final TaskRepository taskRepo;
+public class InboxService {
+    private final InboxRepository inboxRepo;
     private final ProjectRepository projectRepo;
     private final ContextRepository contextRepo;
 
-    public TaskService(TaskRepository taskRepo, ProjectRepository projectRepo, ContextRepository contextRepo) {
-        this.taskRepo = taskRepo;
+    public InboxService(InboxRepository inboxRepo, ProjectRepository projectRepo, ContextRepository contextRepo) {
+        this.inboxRepo = inboxRepo;
         this.projectRepo = projectRepo;
         this.contextRepo = contextRepo;
     }
 
-    public List<TaskResponse> listAll() {
-        return taskRepo.findAll().stream().map(this::toResponse).toList();
+    public List<InboxResponse> listAll() {
+        return inboxRepo.findAll().stream().map(this::toResponse).toList();
     }
 
-    public List<TaskResponse> listByStatus(String status) {
-        return taskRepo.findByStatus(status).stream().map(this::toResponse).toList();
+    public List<InboxResponse> listByStatus(String status) {
+        return inboxRepo.findByStatus(status).stream().map(this::toResponse).toList();
     }
 
-    public TaskResponse create(TaskCreateRequest req) {
-        Task t = new Task();
+    public InboxResponse getById(Long id) {
+        Inbox inbox = inboxRepo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Inbox item not found"));
+        return new InboxResponse(inbox);
+    }
+
+    public InboxResponse create(InboxCreateRequest req) {
+        Inbox t = new Inbox();
         t.setTitle(req.getTitle());
         t.setDescription(req.getDescription());
         t.setDueDate(req.getDueDate());
@@ -58,12 +64,12 @@ public class TaskService {
             t.setContext(c);
         }
 
-        Task saved = taskRepo.save(t);
+        Inbox saved = inboxRepo.save(t);
         return toResponse(saved);
     }
 
-    public TaskResponse update(Long id, TaskUpdateRequest req) {
-        Task t = taskRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Task not found"));
+    public InboxResponse update(Long id, InboxUpdateRequest req) {
+        Inbox t = inboxRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Task not found"));
         t.setTitle(req.getTitle());
         t.setDescription(req.getDescription());
         t.setDueDate(req.getDueDate());
@@ -89,25 +95,26 @@ public class TaskService {
     }
 
     public void delete(Long id) {
-        taskRepo.deleteById(id);
+        inboxRepo.deleteById(id);
     }
 
-    private TaskResponse toResponse(Task t) {
-        TaskResponse resp = new TaskResponse();
-        resp.setId(t.getId());
-        resp.setTitle(t.getTitle());
-        resp.setDescription(t.getDescription());
-        resp.setDueDate(t.getDueDate());
-        resp.setPriority(t.getPriority());
-        resp.setStatus(t.getStatus());
-        if (t.getProject() != null) {
-            resp.setProjectId(t.getProject().getId());
-            resp.setProjectName(t.getProject().getName());
-        }
-        if (t.getContext() != null) {
-            resp.setContextId(t.getContext().getId());
-            resp.setContextName(t.getContext().getName());
-        }
-        return resp;
+    private InboxResponse toResponse(Inbox t) {
+        return new InboxResponse(t);
+//        InboxResponse resp = new InboxResponse(t);
+//        resp.setId(t.getId());
+//        resp.setTitle(t.getTitle());
+//        resp.setDescription(t.getDescription());
+//        resp.setDueDate(t.getDueDate());
+//        resp.setPriority(t.getPriority());
+//        resp.setStatus(t.getStatus());
+//        if (t.getProject() != null) {
+//            resp.setProjectId(t.getProject().getId());
+//            resp.setProjectName(t.getProject().getName());
+//        }
+//        if (t.getContext() != null) {
+//            resp.setContextId(t.getContext().getId());
+//            resp.setContextName(t.getContext().getName());
+//        }
+//        return resp;
     }
 }

@@ -8,7 +8,7 @@ import java.time.LocalDate;
 @Data
 @Entity
 @Table(name = "inbox")
-public class Task {
+public class Inbox {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

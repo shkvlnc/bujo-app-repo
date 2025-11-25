@@ -6,7 +6,7 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data
-public class TaskUpdateRequest {
+public class InboxUpdateRequest {
     @NotBlank
     private String title;
     @Size(max = 500)
