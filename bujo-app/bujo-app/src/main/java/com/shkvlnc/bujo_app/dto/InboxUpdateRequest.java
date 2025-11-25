@@ -4,6 +4,7 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class InboxUpdateRequest {
@@ -18,5 +19,6 @@ public class InboxUpdateRequest {
     private String status;
     private Long projectId;
     private Long contextId;
+    private List<String> tags;
     // getters/setters
 }

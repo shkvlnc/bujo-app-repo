@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -33,6 +35,14 @@ public class Inbox {
     @ManyToOne
     @JoinColumn(name = "context_id")
     private Context context;
+
+    @ManyToMany
+    @JoinTable(
+            name = "inbox_tags",
+            joinColumns = @JoinColumn(name = "inbox_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private List<Tag> tags = new ArrayList<>();
 
     // getters/setters
 }

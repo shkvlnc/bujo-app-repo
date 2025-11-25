@@ -1,9 +1,13 @@
 package com.shkvlnc.bujo_app.dto;
 
 import com.shkvlnc.bujo_app.domain.Inbox;
+
+import com.shkvlnc.bujo_app.domain.Tag;
+
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class InboxResponse {
@@ -17,6 +21,7 @@ public class InboxResponse {
     private String projectName;
     private Long contextId;
     private String contextName;
+    private List<String> tags;
     // getters/setters
 
     public InboxResponse(Inbox inbox) {
@@ -35,6 +40,7 @@ public class InboxResponse {
             this.contextId = inbox.getContext().getId();
             this.contextName = inbox.getContext().getName();
         }
+        this.tags = inbox.getTags().stream().map(Tag::getName).toList();
     }
 
 }
