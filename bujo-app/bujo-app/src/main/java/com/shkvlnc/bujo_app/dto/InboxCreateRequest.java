@@ -22,7 +22,9 @@ public class InboxCreateRequest {
     @Pattern(regexp = "PENDING|DONE")
     private String status = "PENDING";
 
-    private Long projectId;
+//    private Long projectId;
+    private String projectName;
+
     private Long contextId;
 
     private List<String> tags;

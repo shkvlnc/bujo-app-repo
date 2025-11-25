@@ -66,9 +66,9 @@ public class InboxService {
             t.setTags(resolveTags(req.getTags()));
         }
 
-        if (req.getProjectId() != null) {
-            Project p = projectRepo.findById(req.getProjectId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found"));
+        if (req.getProjectName() != null) {
+            Project p = projectRepo.findByNameIgnoreCase(req.getProjectName())
+                    .orElseThrow(() -> new RuntimeException("Project not found: " + req.getProjectName()));
             t.setProject(p);
         }
         if (req.getContextId() != null) {

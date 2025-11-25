@@ -30,9 +30,9 @@ public class TagController {
     }
 
     // ✅ GET /api/tags/{id}/inboxes → list inbox items linked to a tag
-    @GetMapping("/{id}/inboxes")
-    public List<InboxResponse> listInboxesByTag(@PathVariable Long id) {
-        Tag tag = tagRepo.findById(id)
+    @GetMapping("/search")
+    public List<InboxResponse> listInboxesByTagName(@RequestParam String name) {
+        Tag tag = tagRepo.findByNameIgnoreCase(name)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tag not found"));
 
         return tag.getInboxes().stream()
