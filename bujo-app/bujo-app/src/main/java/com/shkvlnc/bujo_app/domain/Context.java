@@ -1,17 +1,23 @@
 package com.shkvlnc.bujo_app.domain;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
-@Data
 @Entity
-@Table(name = "context")
+@Table(name = "contexts")
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString
 public class Context {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
-    @Column(nullable = false, length = 50, unique = true)
+    @Column(nullable = false, unique = true, length = 100)
     private String name;
 
-    // getters/setters
+    @Column(length = 255)
+    private String description; // optional metadata for richer context info
 }

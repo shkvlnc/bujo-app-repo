@@ -1,42 +1,59 @@
 package com.shkvlnc.bujo_app.web;
 
-import com.shkvlnc.bujo_app.domain.Tag;
-import com.shkvlnc.bujo_app.domain.Inbox;
-import com.shkvlnc.bujo_app.dto.InboxResponse;
+import com.shkvlnc.bujo_app.dto.TagCreateRequest;
+import com.shkvlnc.bujo_app.dto.TagUpdateRequest;
 import com.shkvlnc.bujo_app.dto.TagResponse;
-import com.shkvlnc.bujo_app.repository.TagRepository;
-import org.springframework.http.HttpStatus;
+import com.shkvlnc.bujo_app.dto.InboxResponse;
+import com.shkvlnc.bujo_app.service.TagService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/tags")
 public class TagController {
+    private final TagService tagService;
 
-    private final TagRepository tagRepo;
-
-    public TagController(TagRepository tagRepo) {
-        this.tagRepo = tagRepo;
-    }
-
-    // ✅ GET /api/tags → list all tags
+    // ✅ GET all tags
     @GetMapping
-    public List<TagResponse> listAllTags() {
-        return tagRepo.findAll().stream()
-                .map(TagResponse::new)
-                .toList();
+    public List<TagResponse> listAll() {
+        return tagService.listAll();
     }
 
-    // ✅ GET /api/tags/{id}/inboxes → list inbox items linked to a tag
-    @GetMapping("/search")
-    public List<InboxResponse> listInboxesByTagName(@RequestParam String name) {
-        Tag tag = tagRepo.findByNameIgnoreCase(name)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tag not found"));
+    // ✅ GET single tag
+    @GetMapping("/{id}")
+    public TagResponse getById(@PathVariable Long id) {
+        return tagService.getById(id);
+    }
 
-        return tag.getInboxes().stream()
-                .map(InboxResponse::new)
-                .toList();
+    // ✅ POST create tag
+    @PostMapping
+    public ResponseEntity<TagResponse> create(@Valid @RequestBody TagCreateRequest req) {
+        TagResponse created = tagService.create(req);
+        return ResponseEntity.status(201).body(created);
+    }
+
+    // ✅ PUT update tag
+    @PutMapping("/{id}")
+    public TagResponse update(@PathVariable Long id,
+                              @Valid @RequestBody TagUpdateRequest req) {
+        return tagService.update(id, req);
+    }
+
+    // ✅ DELETE tag
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        tagService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // ✅ GET inboxes linked to a tag by name
+    @GetMapping("/{name}/inboxes")
+    public List<InboxResponse> listInboxesByTagName(@PathVariable String name) {
+        return tagService.getInboxesByTagName(name);
     }
 }

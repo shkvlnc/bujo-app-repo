@@ -1,15 +1,22 @@
 package com.shkvlnc.bujo_app.dto;
 
 import com.shkvlnc.bujo_app.domain.Tag;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class TagResponse {
-    private Long id;
-    private String name;
+    private final Long id;
+    private final String name;
 
-    public TagResponse(Tag tag) {
-        this.id = tag.getId();
-        this.name = tag.getName();
+    private TagResponse(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public static TagResponse fromEntity(Tag tag) {
+        if (tag == null) {
+            return null; // ✅ null-safe
+        }
+        return new TagResponse(tag.getId(), tag.getName());
     }
 }

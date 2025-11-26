@@ -1,49 +1,63 @@
 package com.shkvlnc.bujo_app.dto;
 
 import com.shkvlnc.bujo_app.domain.Inbox;
-
 import com.shkvlnc.bujo_app.domain.Tag;
-
-import lombok.Data;
+import lombok.Getter;
 
 import java.time.LocalDate;
 import java.util.List;
 
-@Data
+@Getter
 public class InboxResponse {
-    private Long id;
-    private String title;
-    private String description;
-    private LocalDate dueDate;
-    private Integer priority;
-    private String status;
-    private Long projectId;
-    private String projectName;
-    private Long contextId;
-    private String contextName;
-    private List<String> tags;
-    private ContextResponse context;
-    // getters/setters
+    private final Long id;
+    private final String title;
+    private final String description;
+    private final LocalDate dueDate;
+    private final Inbox.Priority priority;   // ✅ enum instead of Integer
+    private final Inbox.Status status;
+    private final Long projectId;
+    private final String projectName;
+    private final Long contextId;
+    private final String contextName;
+    private final List<String> tags;
 
-    public InboxResponse(Inbox inbox) {
-        this.id = inbox.getId();
-        this.title = inbox.getTitle();
-        this.description = inbox.getDescription();
-        this.dueDate = inbox.getDueDate();
-        this.priority = inbox.getPriority();
-        this.status = inbox.getStatus();
-        this.context = new ContextResponse(inbox.getContext());
-
-
-        if (inbox.getProject() != null) {
-            this.projectId = inbox.getProject().getId();
-            this.projectName = inbox.getProject().getName();
-        }
-        if (inbox.getContext() != null) {
-            this.contextId = inbox.getContext().getId();
-            this.contextName = inbox.getContext().getName();
-        }
-        this.tags = inbox.getTags().stream().map(Tag::getName).toList();
+    private InboxResponse(Long id, String title, String description, LocalDate dueDate,
+                          Inbox.Priority priority, Inbox.Status status,
+                          Long projectId, String projectName,
+                          Long contextId, String contextName,
+                          List<String> tags) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.dueDate = dueDate;
+        this.priority = priority;
+        this.status = status;
+        this.projectId = projectId;
+        this.projectName = projectName;
+        this.contextId = contextId;
+        this.contextName = contextName;
+        this.tags = tags;
     }
 
+    public static InboxResponse fromEntity(Inbox inbox) {
+        if (inbox == null) {
+            return null; // ✅ null-safe
+        }
+
+        return new InboxResponse(
+                inbox.getId(),
+                inbox.getTitle(),
+                inbox.getDescription(),
+                inbox.getDueDate(),
+                inbox.getPriority(),
+                inbox.getStatus(),
+                inbox.getProject() != null ? inbox.getProject().getId() : null,
+                inbox.getProject() != null ? inbox.getProject().getName() : null,
+                inbox.getContext() != null ? inbox.getContext().getId() : null,
+                inbox.getContext() != null ? inbox.getContext().getName() : null,
+                inbox.getTags() != null
+                        ? inbox.getTags().stream().map(Tag::getName).toList()
+                        : List.of()
+        );
+    }
 }

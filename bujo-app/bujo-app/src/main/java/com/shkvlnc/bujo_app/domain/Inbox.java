@@ -1,17 +1,22 @@
 package com.shkvlnc.bujo_app.domain;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
 @Entity
-@Table(name = "inbox")
+@Table(name = "inboxes") // ✅ plural for convention
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 public class Inbox {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, length = 150)
@@ -22,17 +27,19 @@ public class Inbox {
 
     private LocalDate dueDate;
 
-    @Column
-    private Integer priority; // 1-5
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20, nullable = false)   // ✅ enforce non-null priority
+    private Priority priority;
 
-    @Column(length = 20)
-    private String status = "PENDING"; // PENDING, DONE
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20, nullable = false)
+    private Status status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
     private Project project;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "context_id")
     private Context context;
 
@@ -44,5 +51,28 @@ public class Inbox {
     )
     private List<Tag> tags = new ArrayList<>();
 
-    // getters/setters
+    // ✅ Ensure defaults before persisting
+    @PrePersist
+    public void prePersist() {
+        if (status == null) {
+            status = Status.PENDING;
+        }
+        if (priority == null) {
+            priority = Priority.MEDIUM; // sensible default
+        }
+    }
+
+    // --- Enums ---
+    public enum Priority {
+        LOW,
+        MEDIUM,
+        HIGH,
+        URGENT,
+        CRITICAL
+    }
+
+    public enum Status {
+        PENDING,
+        DONE
+    }
 }

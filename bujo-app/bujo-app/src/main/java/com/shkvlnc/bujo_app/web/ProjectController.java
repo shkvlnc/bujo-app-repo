@@ -1,61 +1,52 @@
 package com.shkvlnc.bujo_app.web;
 
-
-import com.shkvlnc.bujo_app.domain.Project;
 import com.shkvlnc.bujo_app.dto.ProjectResponse;
-import com.shkvlnc.bujo_app.repository.ProjectRepository;
-import org.springframework.http.HttpStatus;
+import com.shkvlnc.bujo_app.dto.ProjectCreateRequest;
+import com.shkvlnc.bujo_app.dto.ProjectUpdateRequest;
+import com.shkvlnc.bujo_app.service.ProjectService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/projects")
 public class ProjectController {
-    private final ProjectRepository projRepo;
+    private final ProjectService projectService;
 
-    public ProjectController(ProjectRepository repo) { this.projRepo = repo; }
-
-    // ✅ GET all projects as DTOs
+    // ✅ GET all projects
     @GetMapping
     public List<ProjectResponse> list() {
-        return projRepo.findAll().stream()
-                .map(ProjectResponse::new)
-                .toList();
+        return projectService.listAll();
     }
 
-    // ✅ POST create project → return DTO
+    // ✅ GET single project
+    @GetMapping("/{id}")
+    public ProjectResponse getById(@PathVariable Long id) {
+        return projectService.getById(id);
+    }
+
+    // ✅ POST create project
     @PostMapping
-    public ProjectResponse create(@RequestBody Project p) {
-        Project saved = projRepo.save(p);
-        return new ProjectResponse(saved);
+    public ResponseEntity<ProjectResponse> create(@Valid @RequestBody ProjectCreateRequest req) {
+        ProjectResponse created = projectService.create(req);
+        return ResponseEntity.status(201).body(created); // ✅ 201 Created
     }
 
-    // ✅ PUT update project → return DTO
+    // ✅ PUT update project
     @PutMapping("/{id}")
-    public ResponseEntity<ProjectResponse> update(@PathVariable Long id, @RequestBody Project p) {
-        return projRepo.findById(id).map(existing -> {
-            existing.setName(p.getName());
-            existing.setDescription(p.getDescription());
-            Project updated = projRepo.save(existing);
-            return ResponseEntity.ok(new ProjectResponse(updated));
-        }).orElse(ResponseEntity.notFound().build());
+    public ProjectResponse update(@PathVariable Long id,
+                                  @Valid @RequestBody ProjectUpdateRequest req) {
+        return projectService.update(id, req); // ✅ simplified, service throws if not found
     }
 
-    // ✅ DELETE project → no content
+    // ✅ DELETE project
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        projRepo.deleteById(id);
+        projectService.delete(id); // ✅ service throws if not found
         return ResponseEntity.noContent().build();
-    }
-
-    // ✅ GET single project with tasks/inboxes → return DTO
-    @GetMapping("/{id}")
-    public ProjectResponse getProjectWithTasks(@PathVariable Long id) {
-        Project project = projRepo.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found"));
-        return new ProjectResponse(project);
     }
 }

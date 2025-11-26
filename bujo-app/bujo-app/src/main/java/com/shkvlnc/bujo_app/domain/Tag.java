@@ -1,29 +1,30 @@
 package com.shkvlnc.bujo_app.domain;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
-import lombok.EqualsAndHashCode;
+import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
-@RequiredArgsConstructor
-@NoArgsConstructor(force = true) // ✅ ensures JPA has a no-args constructor
 @Entity
+@Table(name = "tags")
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
-    private final String name;
+    @Column(unique = true, nullable = false, length = 100)
+    private String name;
 
     @ManyToMany(mappedBy = "tags")
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     private List<Inbox> inboxes = new ArrayList<>();
+
+    public Tag(String name) {
+        this.name = name;
+    }
 }
