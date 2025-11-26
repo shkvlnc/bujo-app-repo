@@ -18,32 +18,44 @@ public class ProjectController {
 
     public ProjectController(ProjectRepository repo) { this.projRepo = repo; }
 
-    @GetMapping public List<Project> list() { return projRepo.findAll(); }
+    // ✅ GET all projects as DTOs
+    @GetMapping
+    public List<ProjectResponse> list() {
+        return projRepo.findAll().stream()
+                .map(ProjectResponse::new)
+                .toList();
+    }
 
-    @PostMapping public Project create(@RequestBody Project p) { return projRepo.save(p); }
+    // ✅ POST create project → return DTO
+    @PostMapping
+    public ProjectResponse create(@RequestBody Project p) {
+        Project saved = projRepo.save(p);
+        return new ProjectResponse(saved);
+    }
 
-//    @GetMapping("/{id}") public ResponseEntity<Project> get(@PathVariable Long id) {
-//        return projRepo.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
-//    }
-
-    @PutMapping("/{id}") public ResponseEntity<Project> update(@PathVariable Long id, @RequestBody Project p) {
+    // ✅ PUT update project → return DTO
+    @PutMapping("/{id}")
+    public ResponseEntity<ProjectResponse> update(@PathVariable Long id, @RequestBody Project p) {
         return projRepo.findById(id).map(existing -> {
             existing.setName(p.getName());
             existing.setDescription(p.getDescription());
-            return ResponseEntity.ok(projRepo.save(existing));
+            Project updated = projRepo.save(existing);
+            return ResponseEntity.ok(new ProjectResponse(updated));
         }).orElse(ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/{id}") public ResponseEntity<Void> delete(@PathVariable Long id) {
-        projRepo.deleteById(id); return ResponseEntity.noContent().build();
+    // ✅ DELETE project → no content
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        projRepo.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
-    // ✅ GET /api/projects/{id} → project + its tasks
+    // ✅ GET single project with tasks/inboxes → return DTO
     @GetMapping("/{id}")
     public ProjectResponse getProjectWithTasks(@PathVariable Long id) {
         Project project = projRepo.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found"));
-
         return new ProjectResponse(project);
     }
 }

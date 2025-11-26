@@ -22,6 +22,7 @@ public class InboxResponse {
     private Long contextId;
     private String contextName;
     private List<String> tags;
+    private ContextResponse context;
     // getters/setters
 
     public InboxResponse(Inbox inbox) {
@@ -31,6 +32,8 @@ public class InboxResponse {
         this.dueDate = inbox.getDueDate();
         this.priority = inbox.getPriority();
         this.status = inbox.getStatus();
+        this.context = new ContextResponse(inbox.getContext());
+
 
         if (inbox.getProject() != null) {
             this.projectId = inbox.getProject().getId();

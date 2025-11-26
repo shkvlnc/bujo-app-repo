@@ -4,19 +4,22 @@ import com.shkvlnc.bujo_app.domain.Project;
 import lombok.Data;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 public class ProjectResponse {
     private Long id;
     private String name;
-    private List<InboxResponse> tasks;
+    private String description;
+    private List<InboxResponse> inboxes;
 
     public ProjectResponse(Project project) {
         this.id = project.getId();
         this.name = project.getName();
-        this.tasks = project.getInboxes().stream()
+        this.description = project.getDescription();
+        this.inboxes = project.getInboxes().stream()
                 .map(InboxResponse::new)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     // getters...
