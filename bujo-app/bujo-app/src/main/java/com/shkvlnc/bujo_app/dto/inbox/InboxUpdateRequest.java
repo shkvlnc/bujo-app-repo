@@ -1,4 +1,4 @@
-package com.shkvlnc.bujo_app.dto;
+package com.shkvlnc.bujo_app.dto.inbox;
 
 import jakarta.validation.constraints.*;
 import lombok.Getter;

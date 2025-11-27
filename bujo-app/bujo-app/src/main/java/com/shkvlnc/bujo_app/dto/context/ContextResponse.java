@@ -1,4 +1,4 @@
-package com.shkvlnc.bujo_app.dto;
+package com.shkvlnc.bujo_app.dto.context;
 
 import com.shkvlnc.bujo_app.domain.Context;
 import lombok.Getter;

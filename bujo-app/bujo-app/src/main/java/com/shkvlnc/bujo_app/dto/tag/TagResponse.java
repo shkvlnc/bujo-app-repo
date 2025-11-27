@@ -1,4 +1,4 @@
-package com.shkvlnc.bujo_app.dto;
+package com.shkvlnc.bujo_app.dto.tag;
 
 import com.shkvlnc.bujo_app.domain.Tag;
 import lombok.Getter;

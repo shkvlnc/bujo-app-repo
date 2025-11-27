@@ -1,8 +1,8 @@
 package com.shkvlnc.bujo_app.web;
 
-import com.shkvlnc.bujo_app.dto.ContextResponse;
-import com.shkvlnc.bujo_app.dto.ContextCreateRequest;
-import com.shkvlnc.bujo_app.dto.ContextUpdateRequest;
+import com.shkvlnc.bujo_app.dto.context.ContextResponse;
+import com.shkvlnc.bujo_app.dto.context.ContextCreateRequest;
+import com.shkvlnc.bujo_app.dto.context.ContextUpdateRequest;
 import com.shkvlnc.bujo_app.service.ContextService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -1,11 +1,10 @@
 package com.shkvlnc.bujo_app.service;
 
-import com.shkvlnc.bujo_app.domain.Inbox;
 import com.shkvlnc.bujo_app.domain.Tag;
-import com.shkvlnc.bujo_app.dto.InboxResponse;
-import com.shkvlnc.bujo_app.dto.TagCreateRequest;
-import com.shkvlnc.bujo_app.dto.TagUpdateRequest;
-import com.shkvlnc.bujo_app.dto.TagResponse;
+import com.shkvlnc.bujo_app.dto.inbox.InboxResponse;
+import com.shkvlnc.bujo_app.dto.tag.TagCreateRequest;
+import com.shkvlnc.bujo_app.dto.tag.TagUpdateRequest;
+import com.shkvlnc.bujo_app.dto.tag.TagResponse;
 import com.shkvlnc.bujo_app.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

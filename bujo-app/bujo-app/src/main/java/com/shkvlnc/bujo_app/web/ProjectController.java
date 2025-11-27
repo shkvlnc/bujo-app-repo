@@ -1,8 +1,8 @@
 package com.shkvlnc.bujo_app.web;
 
-import com.shkvlnc.bujo_app.dto.ProjectResponse;
-import com.shkvlnc.bujo_app.dto.ProjectCreateRequest;
-import com.shkvlnc.bujo_app.dto.ProjectUpdateRequest;
+import com.shkvlnc.bujo_app.dto.project.ProjectResponse;
+import com.shkvlnc.bujo_app.dto.project.ProjectCreateRequest;
+import com.shkvlnc.bujo_app.dto.project.ProjectUpdateRequest;
 import com.shkvlnc.bujo_app.service.ProjectService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

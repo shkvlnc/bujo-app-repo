@@ -1,9 +1,9 @@
 package com.shkvlnc.bujo_app.service;
 
 import com.shkvlnc.bujo_app.domain.Project;
-import com.shkvlnc.bujo_app.dto.ProjectCreateRequest;
-import com.shkvlnc.bujo_app.dto.ProjectUpdateRequest;
-import com.shkvlnc.bujo_app.dto.ProjectResponse;
+import com.shkvlnc.bujo_app.dto.project.ProjectCreateRequest;
+import com.shkvlnc.bujo_app.dto.project.ProjectUpdateRequest;
+import com.shkvlnc.bujo_app.dto.project.ProjectResponse;
 import com.shkvlnc.bujo_app.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

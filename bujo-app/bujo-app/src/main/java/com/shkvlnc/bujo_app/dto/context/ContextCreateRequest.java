@@ -1,4 +1,4 @@
-package com.shkvlnc.bujo_app.dto;
+package com.shkvlnc.bujo_app.dto.context;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

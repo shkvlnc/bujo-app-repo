@@ -1,9 +1,9 @@
 package com.shkvlnc.bujo_app.web;
 
-import com.shkvlnc.bujo_app.dto.TagCreateRequest;
-import com.shkvlnc.bujo_app.dto.TagUpdateRequest;
-import com.shkvlnc.bujo_app.dto.TagResponse;
-import com.shkvlnc.bujo_app.dto.InboxResponse;
+import com.shkvlnc.bujo_app.dto.tag.TagCreateRequest;
+import com.shkvlnc.bujo_app.dto.tag.TagUpdateRequest;
+import com.shkvlnc.bujo_app.dto.tag.TagResponse;
+import com.shkvlnc.bujo_app.dto.inbox.InboxResponse;
 import com.shkvlnc.bujo_app.service.TagService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
