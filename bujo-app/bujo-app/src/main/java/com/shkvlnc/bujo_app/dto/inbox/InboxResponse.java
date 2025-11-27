@@ -1,12 +1,27 @@
 package com.shkvlnc.bujo_app.dto.inbox;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.shkvlnc.bujo_app.domain.Inbox;
 import com.shkvlnc.bujo_app.domain.Tag;
 import lombok.Getter;
 
 import java.time.LocalDate;
 import java.util.List;
-
+@JsonPropertyOrder({
+        "id",
+        "title",
+        "description",
+        "status",
+        "priority",
+        "dueDate",
+        "startDate",
+        "completedDate",
+        "contextId",
+        "contextName",
+        "projectId",
+        "projectName",
+        "tags"
+})
 @Getter
 public class InboxResponse {
     private final Long id;

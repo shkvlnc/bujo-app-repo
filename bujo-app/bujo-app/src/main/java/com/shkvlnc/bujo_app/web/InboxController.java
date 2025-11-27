@@ -18,10 +18,15 @@ import java.util.List;
 public class InboxController {
     private final InboxService inboxService;
 
-    @GetMapping
-    public List<InboxResponse> list() {
-        return inboxService.listAll();
-    }
+//    @GetMapping
+//    public List<InboxResponse> list() {
+//        return inboxService.listAll();
+//    }
+@GetMapping
+public List<InboxResponse> list() {
+    return inboxService.listAllOrdered(); // ✅ now returns sorted tasks
+}
+
 
     @GetMapping("/{id}")
     public InboxResponse getById(@PathVariable Long id) {

@@ -18,7 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+
+import static com.shkvlnc.bujo_app.domain.Inbox.Priority.*;
 
 @Service
 @Transactional
@@ -146,5 +149,39 @@ public class InboxService {
                                 .orElseGet(() -> tagRepo.save(new Tag(name))))
                         .toList()
         );
+    }
+
+    public List<InboxResponse> listAllOrdered() {
+        return inboxRepo.findAll().stream()
+                .map(InboxResponse::fromEntity)
+                .sorted(taskOrder())   // ✅ apply comparator
+                .toList();
+    }
+
+
+    private Comparator<InboxResponse> taskOrder() {
+        return Comparator
+                // 1. Status: PENDING before DONE
+                .comparing(InboxResponse::getStatus, Comparator.comparing(
+                        status -> status == Inbox.Status.PENDING ? 0 : 1))
+                // 2. Priority: CRITICAL → URGENT → HIGH → MEDIUM → LOW
+                .thenComparing(InboxResponse::getPriority, Comparator.comparingInt(priority -> {
+                    return switch (priority) {
+                        case CRITICAL -> 5;
+                        case URGENT   -> 4;
+                        case HIGH     -> 3;
+                        case MEDIUM   -> 2;
+                        case LOW      -> 1;
+                        default       -> 0;
+                    };
+                }).reversed())
+                // 3. Due date: earliest first
+                .thenComparing(InboxResponse::getDueDate, Comparator.nullsLast(Comparator.naturalOrder()))
+                // 4. Context name: alphabetical
+                .thenComparing(InboxResponse::getContextName, Comparator.nullsLast(String::compareToIgnoreCase))
+                // 5. Project name: alphabetical
+                .thenComparing(InboxResponse::getProjectName, Comparator.nullsLast(String::compareToIgnoreCase))
+                // 6. Title: alphabetical fallback
+                .thenComparing(InboxResponse::getTitle, String::compareToIgnoreCase);
     }
 }
