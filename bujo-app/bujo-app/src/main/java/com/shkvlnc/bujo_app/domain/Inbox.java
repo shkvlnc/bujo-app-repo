@@ -25,10 +25,17 @@ public class Inbox {
     @Column(length = 500)
     private String description;
 
+    @Column(name = "due_date")
     private LocalDate dueDate;
 
+    @Column(name = "start_date")
+    private LocalDate startDate;
+
+    @Column(name = "completed_date")
+    private LocalDate completedDate;
+
     @Enumerated(EnumType.STRING)
-    @Column(length = 20, nullable = false)   // ✅ enforce non-null priority
+    @Column(length = 20, nullable = false)
     private Priority priority;
 
     @Enumerated(EnumType.STRING)
@@ -58,7 +65,7 @@ public class Inbox {
             status = Status.PENDING;
         }
         if (priority == null) {
-            priority = Priority.MEDIUM; // sensible default
+            priority = Priority.MEDIUM;
         }
     }
 

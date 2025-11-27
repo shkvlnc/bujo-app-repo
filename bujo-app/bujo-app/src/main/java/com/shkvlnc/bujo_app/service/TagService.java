@@ -1,11 +1,10 @@
 package com.shkvlnc.bujo_app.service;
 
-import com.shkvlnc.bujo_app.domain.Inbox;
 import com.shkvlnc.bujo_app.domain.Tag;
-import com.shkvlnc.bujo_app.dto.InboxResponse;
-import com.shkvlnc.bujo_app.dto.TagCreateRequest;
-import com.shkvlnc.bujo_app.dto.TagUpdateRequest;
-import com.shkvlnc.bujo_app.dto.TagResponse;
+import com.shkvlnc.bujo_app.dto.inbox.InboxResponse;
+import com.shkvlnc.bujo_app.dto.tag.TagCreateRequest;
+import com.shkvlnc.bujo_app.dto.tag.TagUpdateRequest;
+import com.shkvlnc.bujo_app.dto.tag.TagResponse;
 import com.shkvlnc.bujo_app.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,14 +32,15 @@ public class TagService {
         return TagResponse.fromEntity(tag);
     }
 
-    public TagResponse create(TagCreateRequest req) {
-        if (tagRepo.existsByNameIgnoreCase(req.getName())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Tag with this name already exists");
-        }
-        Tag tag = new Tag();
-        tag.setName(req.getName());
-        return TagResponse.fromEntity(tagRepo.save(tag));
+    public List<TagResponse> createTags(TagCreateRequest req) {
+        return req.getNames().stream()
+                .map(name -> tagRepo.findByNameIgnoreCase(name)
+                        .orElseGet(() -> tagRepo.save(new Tag(name))))
+                .map(TagResponse::fromEntity) // ✅ convert Tag to TagResponse
+                .toList();
     }
+
+
 
     public TagResponse update(Long id, TagUpdateRequest req) {
         Tag existing = tagRepo.findById(id)

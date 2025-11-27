@@ -1,9 +1,9 @@
 package com.shkvlnc.bujo_app.web;
 
 import com.shkvlnc.bujo_app.domain.Inbox;
-import com.shkvlnc.bujo_app.dto.InboxCreateRequest;
-import com.shkvlnc.bujo_app.dto.InboxResponse;
-import com.shkvlnc.bujo_app.dto.InboxUpdateRequest;
+import com.shkvlnc.bujo_app.dto.inbox.InboxCreateRequest;
+import com.shkvlnc.bujo_app.dto.inbox.InboxResponse;
+import com.shkvlnc.bujo_app.dto.inbox.InboxUpdateRequest;
 import com.shkvlnc.bujo_app.service.InboxService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.shkvlnc.bujo_app.dto;
+package com.shkvlnc.bujo_app.dto.inbox;
 
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -10,7 +10,7 @@ import java.util.List;
 import com.shkvlnc.bujo_app.domain.Inbox; // ✅ reuse enums from entity
 
 @Getter @Setter
-public class InboxUpdateRequest {
+public class InboxCreateRequest {
     @NotBlank(message = "Title is required")
     @Size(max = 100, message = "Title must not exceed 100 characters")
     private String title;
@@ -18,15 +18,17 @@ public class InboxUpdateRequest {
     @Size(max = 500, message = "Description must not exceed 500 characters")
     private String description;
 
-    private LocalDate dueDate; // ✅ optional for updates
+    @NotNull(message = "Due date is required")
+    private LocalDate dueDate;
 
-    private Inbox.Priority priority; // ✅ enum instead of Integer
+    private Inbox.Priority priority;
 
-    private Inbox.Status status = Inbox.Status.PENDING; // ✅ reuse domain enum
-
-    private Long projectId;
-    private Long contextId;
+    private Inbox.Status status = Inbox.Status.PENDING; // ✅ default value
 
     @Size(max = 10, message = "You can assign up to 10 tags")
     private List<String> tags;
+
+    // ✅ ID-only references
+    private Long projectId;
+    private Long contextId;
 }

@@ -1,6 +1,7 @@
-package com.shkvlnc.bujo_app.dto;
+package com.shkvlnc.bujo_app.dto.project;
 
 import com.shkvlnc.bujo_app.domain.Project;
+import com.shkvlnc.bujo_app.dto.inbox.InboxResponse;
 import lombok.Getter;
 
 import java.util.List;

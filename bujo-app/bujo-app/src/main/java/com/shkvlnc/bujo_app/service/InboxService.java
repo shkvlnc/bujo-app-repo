@@ -4,9 +4,9 @@ import com.shkvlnc.bujo_app.domain.Context;
 import com.shkvlnc.bujo_app.domain.Project;
 import com.shkvlnc.bujo_app.domain.Inbox;
 import com.shkvlnc.bujo_app.domain.Tag;
-import com.shkvlnc.bujo_app.dto.InboxCreateRequest;
-import com.shkvlnc.bujo_app.dto.InboxResponse;
-import com.shkvlnc.bujo_app.dto.InboxUpdateRequest;
+import com.shkvlnc.bujo_app.dto.inbox.InboxCreateRequest;
+import com.shkvlnc.bujo_app.dto.inbox.InboxResponse;
+import com.shkvlnc.bujo_app.dto.inbox.InboxUpdateRequest;
 import com.shkvlnc.bujo_app.repository.ContextRepository;
 import com.shkvlnc.bujo_app.repository.ProjectRepository;
 import com.shkvlnc.bujo_app.repository.InboxRepository;
@@ -80,41 +80,58 @@ public class InboxService {
         inbox.setDescription(req.getDescription());
         inbox.setDueDate(req.getDueDate());
         inbox.setPriority(req.getPriority());
-        inbox.setStatus(req.getStatus() != null ? req.getStatus() : Inbox.Status.PENDING); // ✅ enum
+        inbox.setStatus(req.getStatus() != null ? req.getStatus() : Inbox.Status.PENDING);
         inbox.setTags(resolveTags(req.getTags()));
 
-        if (req.getProjectName() != null) {
-            Project project = projectRepo.findByNameIgnoreCase(req.getProjectName())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found: " + req.getProjectName()));
+        if (req.getProjectId() != null) {
+            Project project = projectRepo.findById(req.getProjectId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                            "Project not found with id: " + req.getProjectId()));
             inbox.setProject(project);
         }
 
         if (req.getContextId() != null) {
             Context context = contextRepo.findById(req.getContextId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Context not found"));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                            "Context not found with id: " + req.getContextId()));
             inbox.setContext(context);
         }
     }
+
 
     private void applyUpdateRequest(Inbox inbox, InboxUpdateRequest req) {
         inbox.setTitle(req.getTitle());
         inbox.setDescription(req.getDescription());
         inbox.setDueDate(req.getDueDate());
         inbox.setPriority(req.getPriority());
-        inbox.setStatus(req.getStatus()); // ✅ should be enum in DTO
+        inbox.setStatus(req.getStatus());
         inbox.setTags(resolveTags(req.getTags()));
 
+        // ✅ Hybrid project resolution
         if (req.getProjectId() != null) {
             Project project = projectRepo.findById(req.getProjectId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found"));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                            "Project not found with id: " + req.getProjectId()));
+            inbox.setProject(project);
+        } else if (req.getProjectName() != null) {
+            Project project = projectRepo.findByNameIgnoreCase(req.getProjectName())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                            "Project not found with name: " + req.getProjectName()));
             inbox.setProject(project);
         } else {
             inbox.setProject(null);
         }
 
+        // ✅ Hybrid context resolution
         if (req.getContextId() != null) {
             Context context = contextRepo.findById(req.getContextId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Context not found"));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                            "Context not found with id: " + req.getContextId()));
+            inbox.setContext(context);
+        } else if (req.getContextName() != null) {
+            Context context = contextRepo.findByNameIgnoreCase(req.getContextName())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                            "Context not found with name: " + req.getContextName()));
             inbox.setContext(context);
         } else {
             inbox.setContext(null);

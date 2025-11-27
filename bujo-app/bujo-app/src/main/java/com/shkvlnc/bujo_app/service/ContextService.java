@@ -1,9 +1,9 @@
 package com.shkvlnc.bujo_app.service;
 
 import com.shkvlnc.bujo_app.domain.Context;
-import com.shkvlnc.bujo_app.dto.ContextCreateRequest;
-import com.shkvlnc.bujo_app.dto.ContextUpdateRequest;
-import com.shkvlnc.bujo_app.dto.ContextResponse;
+import com.shkvlnc.bujo_app.dto.context.ContextCreateRequest;
+import com.shkvlnc.bujo_app.dto.context.ContextUpdateRequest;
+import com.shkvlnc.bujo_app.dto.context.ContextResponse;
 import com.shkvlnc.bujo_app.repository.ContextRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

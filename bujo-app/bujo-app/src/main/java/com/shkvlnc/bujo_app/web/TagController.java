@@ -1,12 +1,13 @@
 package com.shkvlnc.bujo_app.web;
 
-import com.shkvlnc.bujo_app.dto.TagCreateRequest;
-import com.shkvlnc.bujo_app.dto.TagUpdateRequest;
-import com.shkvlnc.bujo_app.dto.TagResponse;
-import com.shkvlnc.bujo_app.dto.InboxResponse;
+import com.shkvlnc.bujo_app.dto.tag.TagCreateRequest;
+import com.shkvlnc.bujo_app.dto.tag.TagUpdateRequest;
+import com.shkvlnc.bujo_app.dto.tag.TagResponse;
+import com.shkvlnc.bujo_app.dto.inbox.InboxResponse;
 import com.shkvlnc.bujo_app.service.TagService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,10 +33,11 @@ public class TagController {
 
     // ✅ POST create tag
     @PostMapping
-    public ResponseEntity<TagResponse> create(@Valid @RequestBody TagCreateRequest req) {
-        TagResponse created = tagService.create(req);
-        return ResponseEntity.status(201).body(created);
+    public ResponseEntity<List<TagResponse>> create(@Valid @RequestBody TagCreateRequest req) {
+        List<TagResponse> created = tagService.createTags(req);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
+
 
     // ✅ PUT update tag
     @PutMapping("/{id}")

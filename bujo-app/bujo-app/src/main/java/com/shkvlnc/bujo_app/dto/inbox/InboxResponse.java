@@ -1,4 +1,4 @@
-package com.shkvlnc.bujo_app.dto;
+package com.shkvlnc.bujo_app.dto.inbox;
 
 import com.shkvlnc.bujo_app.domain.Inbox;
 import com.shkvlnc.bujo_app.domain.Tag;
@@ -20,12 +20,15 @@ public class InboxResponse {
     private final Long contextId;
     private final String contextName;
     private final List<String> tags;
+    private final LocalDate startDate;
+    private final LocalDate completedDate;
+
 
     private InboxResponse(Long id, String title, String description, LocalDate dueDate,
                           Inbox.Priority priority, Inbox.Status status,
                           Long projectId, String projectName,
                           Long contextId, String contextName,
-                          List<String> tags) {
+                          List<String> tags, LocalDate startDate, LocalDate completedDate) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -37,12 +40,13 @@ public class InboxResponse {
         this.contextId = contextId;
         this.contextName = contextName;
         this.tags = tags;
+        this.startDate = startDate;
+        this.completedDate = completedDate;
+
     }
 
     public static InboxResponse fromEntity(Inbox inbox) {
-        if (inbox == null) {
-            return null; // ✅ null-safe
-        }
+        if (inbox == null) return null;
 
         return new InboxResponse(
                 inbox.getId(),
@@ -55,9 +59,9 @@ public class InboxResponse {
                 inbox.getProject() != null ? inbox.getProject().getName() : null,
                 inbox.getContext() != null ? inbox.getContext().getId() : null,
                 inbox.getContext() != null ? inbox.getContext().getName() : null,
-                inbox.getTags() != null
-                        ? inbox.getTags().stream().map(Tag::getName).toList()
-                        : List.of()
+                inbox.getTags() != null ? inbox.getTags().stream().map(Tag::getName).toList() : List.of(),
+                inbox.getStartDate(),
+                inbox.getCompletedDate()
         );
     }
 }
