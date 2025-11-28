@@ -24,7 +24,7 @@ public class ProjectResponse {
 
     public static ProjectResponse fromEntity(Project project) {
         if (project == null) {
-            return null; // ✅ null-safe
+            return null;
         }
         return new ProjectResponse(
                 project.getId(),

@@ -18,6 +18,7 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class TagService {
+
     private final TagRepository tagRepo;
 
     public List<TagResponse> listAll() {
@@ -40,8 +41,6 @@ public class TagService {
                 .toList();
     }
 
-
-
     public TagResponse update(Long id, TagUpdateRequest req) {
         Tag existing = tagRepo.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tag not found"));
@@ -63,6 +62,4 @@ public class TagService {
                 .map(InboxResponse::fromEntity)
                 .toList();
     }
-
-
 }

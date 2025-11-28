@@ -28,6 +28,7 @@ import static com.shkvlnc.bujo_app.domain.Inbox.Priority.*;
 @Transactional
 @RequiredArgsConstructor
 public class InboxService {
+
     private final InboxRepository inboxRepo;
     private final ProjectRepository projectRepo;
     private final ContextRepository contextRepo;
@@ -35,7 +36,14 @@ public class InboxService {
 
     public List<InboxResponse> listAll() {
         return inboxRepo.findAll().stream()
-                .map(InboxResponse::fromEntity) // ✅ consistent DTO mapping
+                .map(InboxResponse::fromEntity)
+                .toList();
+    }
+
+    public List<InboxResponse> listAllOrdered() {
+        return inboxRepo.findAll().stream()
+                .map(InboxResponse::fromEntity)
+                .sorted(taskOrder())
                 .toList();
     }
 
@@ -55,27 +63,23 @@ public class InboxService {
         Inbox inbox = inboxRepo.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Inbox item not found"));
 
-        // Basic fields
         inbox.setTitle(req.getTitle());
         inbox.setDescription(req.getDescription());
         inbox.setDueDate(req.getDueDate());
         inbox.setPriority(req.getPriority());
 
-        // ✅ Lifecycle handling for status
         if (req.getStatus() != null) {
             if (req.getStatus() == Inbox.Status.IN_PROGRESS && inbox.getStartDate() == null) {
-                inbox.setStartDate(LocalDate.now()); // auto-fill startDate
+                inbox.setStartDate(LocalDate.now());
             }
             if (req.getStatus() == Inbox.Status.DONE && inbox.getCompletedDate() == null) {
-                inbox.setCompletedDate(LocalDate.now()); // auto-fill completedDate
+                inbox.setCompletedDate(LocalDate.now());
             }
             inbox.setStatus(req.getStatus());
         }
 
-        // Tags
         inbox.setTags(resolveTags(req.getTags()));
 
-        // ✅ Hybrid project resolution
         if (req.getProjectId() != null) {
             Project project = projectRepo.findById(req.getProjectId())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -90,7 +94,6 @@ public class InboxService {
             inbox.setProject(null);
         }
 
-        // ✅ Hybrid context resolution
         if (req.getContextId() != null) {
             Context context = contextRepo.findById(req.getContextId())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -153,7 +156,6 @@ public class InboxService {
         }
     }
 
-
     private void applyUpdateRequest(Inbox inbox, InboxUpdateRequest req) {
         inbox.setTitle(req.getTitle());
         inbox.setDescription(req.getDescription());
@@ -198,13 +200,6 @@ public class InboxService {
         );
     }
 
-    public List<InboxResponse> listAllOrdered() {
-        return inboxRepo.findAll().stream()
-                .map(InboxResponse::fromEntity)
-                .sorted(taskOrder())   // ✅ apply comparator
-                .toList();
-    }
-
     private Project resolveProject(Long projectId, String projectName) {
         if (projectId != null) {
             return projectRepo.findById(projectId)
@@ -235,15 +230,13 @@ public class InboxService {
         return Comparator
                 .comparing(InboxResponse::getStatus, Comparator.comparing(
                         status -> status == Inbox.Status.PENDING ? 0 : 1))
-                .thenComparing(InboxResponse::getPriority, Comparator.comparingInt(priority -> {
-                    return switch (priority) {
-                        case CRITICAL -> 5;
-                        case URGENT   -> 4;
-                        case HIGH     -> 3;
-                        case MEDIUM   -> 2;
-                        case LOW      -> 1;
-                        default       -> 0;
-                    };
+                .thenComparing(InboxResponse::getPriority, Comparator.comparingInt(priority -> switch (priority) {
+                    case CRITICAL -> 5;
+                    case URGENT   -> 4;
+                    case HIGH     -> 3;
+                    case MEDIUM   -> 2;
+                    case LOW      -> 1;
+                    default       -> 0;
                 }).reversed())
                 .thenComparing(InboxResponse::getDueDate, Comparator.nullsLast(Comparator.naturalOrder()))
                 .thenComparing(InboxResponse::getContextName, Comparator.nullsLast(String::compareToIgnoreCase))

@@ -15,10 +15,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/contexts")
 public class ContextController {
+
     private final ContextService contextService;
 
     @GetMapping
-    public List<ContextResponse> list() {
+    public List<ContextResponse> listAll() {
         return contextService.listAll();
     }
 

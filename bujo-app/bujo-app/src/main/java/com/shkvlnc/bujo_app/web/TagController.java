@@ -17,6 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/tags")
 public class TagController {
+
     private final TagService tagService;
 
     @GetMapping
@@ -24,18 +25,17 @@ public class TagController {
         return tagService.listAll();
     }
 
-
     @GetMapping("/{id}")
     public TagResponse getById(@PathVariable Long id) {
         return tagService.getById(id);
     }
-
 
     @PostMapping
     public ResponseEntity<List<TagResponse>> create(@Valid @RequestBody TagCreateRequest req) {
         List<TagResponse> created = tagService.createTags(req);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
+
 
     @PutMapping("/{id}")
     public TagResponse update(@PathVariable Long id,

@@ -12,15 +12,13 @@
 //@RestControllerAdvice
 //public class GlobalExceptionHandler {
 //
-//    // Handle ResponseStatusException (your service throws these)
 //    @ExceptionHandler(ResponseStatusException.class)
 //    public ResponseEntity<Map<String, String>> handleResponseStatusException(ResponseStatusException ex) {
 //        Map<String, String> error = new HashMap<>();
-//        error.put("message", ex.getReason()); // only return the message
+//        error.put("message", ex.getReason());
 //        return ResponseEntity.status(ex.getStatusCode()).body(error);
 //    }
 //
-//    // Handle validation errors
 //    @ExceptionHandler(org.springframework.web.bind.MethodArgumentNotValidException.class)
 //    public ResponseEntity<Map<String, String>> handleValidationException(org.springframework.web.bind.MethodArgumentNotValidException ex) {
 //        String firstError = ex.getBindingResult().getFieldError() != null
@@ -31,7 +29,6 @@
 //        return ResponseEntity.badRequest().body(error);
 //    }
 //
-//    // Handle JSON parse / unreadable request body errors
 //    @ExceptionHandler(HttpMessageNotReadableException.class)
 //    public ResponseEntity<Map<String, String>> handleJsonParseError(HttpMessageNotReadableException ex) {
 //        Map<String, String> error = new HashMap<>();

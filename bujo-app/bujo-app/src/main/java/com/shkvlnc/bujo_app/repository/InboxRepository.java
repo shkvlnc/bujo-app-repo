@@ -5,14 +5,18 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-
 import java.util.List;
 
 public interface InboxRepository extends JpaRepository<Inbox, Long> {
+
     List<Inbox> findByStatus(Inbox.Status status);
+
     List<Inbox> findByProjectId(Long projectId);
+
     List<Inbox> findByContextId(Long contextId);
+
     List<Inbox> findByTitleContainingIgnoreCase(String keyword);
+
     List<Inbox> findByTags_NameIgnoreCase(String tag);
 
     @Query("""

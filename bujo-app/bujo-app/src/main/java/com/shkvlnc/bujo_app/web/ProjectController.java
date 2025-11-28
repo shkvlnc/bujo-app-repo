@@ -15,19 +15,18 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/projects")
 public class ProjectController {
+
     private final ProjectService projectService;
 
     @GetMapping
-    public List<ProjectResponse> list() {
+    public List<ProjectResponse> listAll() {
         return projectService.listAll();
     }
-
 
     @GetMapping("/{id}")
     public ProjectResponse getById(@PathVariable Long id) {
         return projectService.getById(id);
     }
-
 
     @PostMapping
     public ResponseEntity<ProjectResponse> create(@Valid @RequestBody ProjectCreateRequest req) {

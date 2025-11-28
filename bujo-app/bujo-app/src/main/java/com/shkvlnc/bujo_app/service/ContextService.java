@@ -15,11 +15,12 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ContextService {
+
     private final ContextRepository contextRepo;
 
     public List<ContextResponse> listAll() {
         return contextRepo.findAll().stream()
-                .map(ContextResponse::fromEntity) 
+                .map(ContextResponse::fromEntity)
                 .toList();
     }
 

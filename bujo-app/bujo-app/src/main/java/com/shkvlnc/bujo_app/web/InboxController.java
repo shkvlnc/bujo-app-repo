@@ -14,15 +14,15 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/inbox")
+@RequestMapping("/api/inboxes")
 public class InboxController {
+
     private final InboxService inboxService;
 
-@GetMapping
-public List<InboxResponse> list() {
-    return inboxService.listAllOrdered();
-}
-
+    @GetMapping
+    public List<InboxResponse> listAll() {
+        return inboxService.listAllOrdered();
+    }
 
     @GetMapping("/{id}")
     public InboxResponse getById(@PathVariable Long id) {
@@ -47,15 +47,12 @@ public List<InboxResponse> list() {
         return ResponseEntity.noContent().build();
     }
 
-
     @GetMapping("/search")
-    public List<InboxResponse> search(
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) String tag,
-            @RequestParam(required = false) Inbox.Status status,
-            @RequestParam(required = false) Long contextId,
-            @RequestParam(required = false) Long projectId) {
+    public List<InboxResponse> search(@RequestParam(required = false) String keyword,
+                                      @RequestParam(required = false) String tag,
+                                      @RequestParam(required = false) Inbox.Status status,
+                                      @RequestParam(required = false) Long contextId,
+                                      @RequestParam(required = false) Long projectId) {
         return inboxService.search(keyword, tag, status, contextId, projectId);
     }
-
 }
