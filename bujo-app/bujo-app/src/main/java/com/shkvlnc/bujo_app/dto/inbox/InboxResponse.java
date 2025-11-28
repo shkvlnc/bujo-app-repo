@@ -1,12 +1,19 @@
 package com.shkvlnc.bujo_app.dto.inbox;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 import com.shkvlnc.bujo_app.domain.Inbox;
+import com.shkvlnc.bujo_app.domain.Project;
 import com.shkvlnc.bujo_app.domain.Tag;
+
+import com.shkvlnc.bujo_app.repository.InboxRepository;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.List;
+
 @JsonPropertyOrder({
         "id",
         "title",
@@ -28,7 +35,7 @@ public class InboxResponse {
     private final String title;
     private final String description;
     private final LocalDate dueDate;
-    private final Inbox.Priority priority;   // ✅ enum instead of Integer
+    private final Inbox.Priority priority;
     private final Inbox.Status status;
     private final Long projectId;
     private final String projectName;
@@ -37,7 +44,6 @@ public class InboxResponse {
     private final List<String> tags;
     private final LocalDate startDate;
     private final LocalDate completedDate;
-
 
     private InboxResponse(Long id, String title, String description, LocalDate dueDate,
                           Inbox.Priority priority, Inbox.Status status,
@@ -57,7 +63,6 @@ public class InboxResponse {
         this.tags = tags;
         this.startDate = startDate;
         this.completedDate = completedDate;
-
     }
 
     public static InboxResponse fromEntity(Inbox inbox) {

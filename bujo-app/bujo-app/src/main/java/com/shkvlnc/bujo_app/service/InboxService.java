@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -53,7 +54,57 @@ public class InboxService {
     public InboxResponse update(Long id, InboxUpdateRequest req) {
         Inbox inbox = inboxRepo.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Inbox item not found"));
-        applyUpdateRequest(inbox, req);
+
+        // Basic fields
+        inbox.setTitle(req.getTitle());
+        inbox.setDescription(req.getDescription());
+        inbox.setDueDate(req.getDueDate());
+        inbox.setPriority(req.getPriority());
+
+        // ✅ Lifecycle handling for status
+        if (req.getStatus() != null) {
+            if (req.getStatus() == Inbox.Status.IN_PROGRESS && inbox.getStartDate() == null) {
+                inbox.setStartDate(LocalDate.now()); // auto-fill startDate
+            }
+            if (req.getStatus() == Inbox.Status.DONE && inbox.getCompletedDate() == null) {
+                inbox.setCompletedDate(LocalDate.now()); // auto-fill completedDate
+            }
+            inbox.setStatus(req.getStatus());
+        }
+
+        // Tags
+        inbox.setTags(resolveTags(req.getTags()));
+
+        // ✅ Hybrid project resolution
+        if (req.getProjectId() != null) {
+            Project project = projectRepo.findById(req.getProjectId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                            "Project not found with id: " + req.getProjectId()));
+            inbox.setProject(project);
+        } else if (req.getProjectName() != null) {
+            Project project = projectRepo.findByNameIgnoreCase(req.getProjectName())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                            "Project not found with name: " + req.getProjectName()));
+            inbox.setProject(project);
+        } else {
+            inbox.setProject(null);
+        }
+
+        // ✅ Hybrid context resolution
+        if (req.getContextId() != null) {
+            Context context = contextRepo.findById(req.getContextId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                            "Context not found with id: " + req.getContextId()));
+            inbox.setContext(context);
+        } else if (req.getContextName() != null) {
+            Context context = contextRepo.findByNameIgnoreCase(req.getContextName())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                            "Context not found with name: " + req.getContextName()));
+            inbox.setContext(context);
+        } else {
+            inbox.setContext(null);
+        }
+
         return InboxResponse.fromEntity(inboxRepo.save(inbox));
     }
 

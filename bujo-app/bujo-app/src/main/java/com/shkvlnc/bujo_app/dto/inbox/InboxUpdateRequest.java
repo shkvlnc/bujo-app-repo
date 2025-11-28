@@ -1,37 +1,41 @@
 package com.shkvlnc.bujo_app.dto.inbox;
 
-import jakarta.validation.constraints.*;
+import com.shkvlnc.bujo_app.domain.Inbox;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.List;
 
-import com.shkvlnc.bujo_app.domain.Inbox; // ✅ reuse enums from entity
-
-@Getter @Setter
+@Getter
+@Setter
 public class InboxUpdateRequest {
-    @NotBlank(message = "Title is required")
-    @Size(max = 100, message = "Title must not exceed 100 characters")
+
+    @NotBlank
+    @Size(max = 255)
     private String title;
 
-    @Size(max = 500, message = "Description must not exceed 500 characters")
+    @Size(max = 1000)
     private String description;
 
-    private LocalDate dueDate; // ✅ optional for updates
+    private LocalDate dueDate;
 
-    private Inbox.Priority priority; // ✅ enum instead of Integer
+    @Enumerated(EnumType.STRING)
+    @NotNull(message = "Priority is required")
+    private Inbox.Priority priority;   // ✅ enum, consistent with domain
 
-    private Inbox.Status status = Inbox.Status.PENDING; // ✅ reuse domain enum
+    private Inbox.Status status;       // ✅ drives lifecycle changes (startDate/completedDate auto-filled in service)
 
-    @Size(max = 10, message = "You can assign up to 10 tags")
-    private List<String> tags;
-
-    // ✅ Hybrid project resolution
     private Long projectId;
-    private String projectName;
+    private String projectName;        // ✅ hybrid resolution: either ID or name
 
-    // ✅ Hybrid context resolution
     private Long contextId;
-    private String contextName;
+    private String contextName;        // ✅ hybrid resolution: either ID or name
+
+    private List<String> tags;
 }
