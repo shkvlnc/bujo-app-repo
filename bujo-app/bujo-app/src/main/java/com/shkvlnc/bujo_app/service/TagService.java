@@ -18,11 +18,12 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class TagService {
+
     private final TagRepository tagRepo;
 
     public List<TagResponse> listAll() {
         return tagRepo.findAll().stream()
-                .map(TagResponse::fromEntity) // ✅ consistent DTO mapping
+                .map(TagResponse::fromEntity)
                 .toList();
     }
 
@@ -32,13 +33,12 @@ public class TagService {
         return TagResponse.fromEntity(tag);
     }
 
-    public TagResponse create(TagCreateRequest req) {
-        if (tagRepo.existsByNameIgnoreCase(req.getName())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Tag with this name already exists");
-        }
-        Tag tag = new Tag();
-        tag.setName(req.getName());
-        return TagResponse.fromEntity(tagRepo.save(tag));
+    public List<TagResponse> createTags(TagCreateRequest req) {
+        return req.getNames().stream()
+                .map(name -> tagRepo.findByNameIgnoreCase(name)
+                        .orElseGet(() -> tagRepo.save(new Tag(name))))
+                .map(TagResponse::fromEntity)
+                .toList();
     }
 
     public TagResponse update(Long id, TagUpdateRequest req) {
@@ -55,20 +55,11 @@ public class TagService {
         tagRepo.deleteById(id);
     }
 
-    public List<InboxResponse> getInboxesByTagName(String name) {
-        Tag tag = tagRepo.findByNameIgnoreCase(name)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tag not found: " + name));
+    public List<InboxResponse> getInboxesByTagId(Long id) {
+        Tag tag = tagRepo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tag not found: " + id));
         return tag.getInboxes().stream()
-                .map(InboxResponse::fromEntity) // ✅ convert entity → DTO
+                .map(InboxResponse::fromEntity)
                 .toList();
     }
-
-
-    public List<TagResponse> getTagsByTagName(String name) {
-        return tagRepo.findByNameContainingIgnoreCase(name).stream()
-                .map(TagResponse::fromEntity)
-                .toList();
-    }
-
-
 }

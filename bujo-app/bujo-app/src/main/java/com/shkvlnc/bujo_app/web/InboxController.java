@@ -14,13 +14,14 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/inbox")
+@RequestMapping("/api/inboxes")
 public class InboxController {
+
     private final InboxService inboxService;
 
     @GetMapping
-    public List<InboxResponse> list() {
-        return inboxService.listAll();
+    public List<InboxResponse> listAll() {
+        return inboxService.listAllOrdered();
     }
 
     @GetMapping("/{id}")
@@ -31,27 +32,27 @@ public class InboxController {
     @PostMapping
     public ResponseEntity<InboxResponse> create(@Valid @RequestBody InboxCreateRequest req) {
         InboxResponse created = inboxService.create(req);
-        return ResponseEntity.status(201).body(created); // ✅ 201 Created
+        return ResponseEntity.status(201).body(created);
     }
 
     @PutMapping("/{id}")
     public InboxResponse update(@PathVariable Long id,
                                 @Valid @RequestBody InboxUpdateRequest req) {
-        return inboxService.update(id, req); // ✅ simplified, service throws if not found
+        return inboxService.update(id, req);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        inboxService.delete(id); // ✅ service throws if not found
+        inboxService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
-    // ✅ Flexible search: keyword, tag, status (enum)
     @GetMapping("/search")
-    public List<InboxResponse> search(
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) String tag,
-            @RequestParam(required = false) Inbox.Status status) {
-        return inboxService.search(keyword, tag, status);
+    public List<InboxResponse> search(@RequestParam(required = false) String keyword,
+                                      @RequestParam(required = false) String tag,
+                                      @RequestParam(required = false) Inbox.Status status,
+                                      @RequestParam(required = false) Long contextId,
+                                      @RequestParam(required = false) Long projectId) {
+        return inboxService.search(keyword, tag, status, contextId, projectId);
     }
 }

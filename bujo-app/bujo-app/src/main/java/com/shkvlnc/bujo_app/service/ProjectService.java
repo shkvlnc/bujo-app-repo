@@ -15,11 +15,12 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ProjectService {
+
     private final ProjectRepository projectRepo;
 
     public List<ProjectResponse> listAll() {
         return projectRepo.findAll().stream()
-                .map(ProjectResponse::fromEntity) // ✅ consistent DTO mapping
+                .map(ProjectResponse::fromEntity)
                 .toList();
     }
 

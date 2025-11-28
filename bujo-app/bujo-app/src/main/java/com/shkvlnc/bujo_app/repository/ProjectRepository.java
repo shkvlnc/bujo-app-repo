@@ -7,9 +7,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProjectRepository extends JpaRepository<Project, Long> {
+
     Optional<Project> findByNameIgnoreCase(String name);
 
     boolean existsByNameIgnoreCase(String name);
 
-    List<Project> findByDescriptionContainingIgnoreCase(String keyword); // ✅ return list, not Optional
+    List<Project> findByDescriptionContainingIgnoreCase(String keyword);
 }
