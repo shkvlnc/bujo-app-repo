@@ -15,7 +15,7 @@ public class ContextResponse {
 
     public static ContextResponse fromEntity(Context context) {
         if (context == null) {
-            return null; // ✅ null-safe
+            return null;
         }
         return new ContextResponse(context.getId(), context.getName());
     }

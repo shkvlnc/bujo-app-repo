@@ -22,7 +22,7 @@ public class TagService {
 
     public List<TagResponse> listAll() {
         return tagRepo.findAll().stream()
-                .map(TagResponse::fromEntity) // ✅ consistent DTO mapping
+                .map(TagResponse::fromEntity)
                 .toList();
     }
 
@@ -36,7 +36,7 @@ public class TagService {
         return req.getNames().stream()
                 .map(name -> tagRepo.findByNameIgnoreCase(name)
                         .orElseGet(() -> tagRepo.save(new Tag(name))))
-                .map(TagResponse::fromEntity) // ✅ convert Tag to TagResponse
+                .map(TagResponse::fromEntity)
                 .toList();
     }
 
@@ -60,7 +60,7 @@ public class TagService {
         Tag tag = tagRepo.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tag not found: " + id));
         return tag.getInboxes().stream()
-                .map(InboxResponse::fromEntity) // ✅ convert entity → DTO
+                .map(InboxResponse::fromEntity)
                 .toList();
     }
 

@@ -17,40 +17,33 @@ import java.util.List;
 public class ProjectController {
     private final ProjectService projectService;
 
-//    public ProjectController(ProjectService projectService) {
-//        this.projectService = projectService;
-//    }
-
-    // ✅ GET all projects
     @GetMapping
     public List<ProjectResponse> list() {
         return projectService.listAll();
     }
 
-    // ✅ GET single project
+
     @GetMapping("/{id}")
     public ProjectResponse getById(@PathVariable Long id) {
         return projectService.getById(id);
     }
 
-    // ✅ POST create project
+
     @PostMapping
     public ResponseEntity<ProjectResponse> create(@Valid @RequestBody ProjectCreateRequest req) {
         ProjectResponse created = projectService.create(req);
-        return ResponseEntity.status(201).body(created); // ✅ 201 Created
+        return ResponseEntity.status(201).body(created);
     }
 
-    // ✅ PUT update project
     @PutMapping("/{id}")
     public ProjectResponse update(@PathVariable Long id,
                                   @Valid @RequestBody ProjectUpdateRequest req) {
-        return projectService.update(id, req); // ✅ simplified, service throws if not found
+        return projectService.update(id, req);
     }
 
-    // ✅ DELETE project
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        projectService.delete(id); // ✅ service throws if not found
+        projectService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

@@ -17,36 +17,31 @@ import java.util.List;
 public class ContextController {
     private final ContextService contextService;
 
-    // ✅ GET all contexts
     @GetMapping
     public List<ContextResponse> list() {
         return contextService.listAll();
     }
 
-    // ✅ GET single context
     @GetMapping("/{id}")
     public ContextResponse getById(@PathVariable Long id) {
         return contextService.getById(id);
     }
 
-    // ✅ POST create context
     @PostMapping
     public ResponseEntity<ContextResponse> create(@Valid @RequestBody ContextCreateRequest req) {
         ContextResponse created = contextService.create(req);
-        return ResponseEntity.status(201).body(created); // ✅ 201 Created
+        return ResponseEntity.status(201).body(created);
     }
 
-    // ✅ PUT update context
     @PutMapping("/{id}")
     public ContextResponse update(@PathVariable Long id,
                                   @Valid @RequestBody ContextUpdateRequest req) {
-        return contextService.update(id, req); // ✅ simplified, service throws if not found
+        return contextService.update(id, req);
     }
 
-    // ✅ DELETE context
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        contextService.delete(id); // ✅ service throws if not found
+        contextService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

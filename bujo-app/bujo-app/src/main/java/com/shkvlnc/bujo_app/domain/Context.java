@@ -19,5 +19,5 @@ public class Context {
     private String name;
 
     @Column(length = 255)
-    private String description; // optional metadata for richer context info
+    private String description;
 }

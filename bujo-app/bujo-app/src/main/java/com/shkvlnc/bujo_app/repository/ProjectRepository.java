@@ -11,5 +11,5 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     boolean existsByNameIgnoreCase(String name);
 
-    List<Project> findByDescriptionContainingIgnoreCase(String keyword); // ✅ return list, not Optional
+    List<Project> findByDescriptionContainingIgnoreCase(String keyword);
 }

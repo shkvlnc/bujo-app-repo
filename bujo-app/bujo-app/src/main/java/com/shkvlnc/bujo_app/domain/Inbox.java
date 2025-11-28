@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "inboxes") // ✅ plural for convention
+@Table(name = "inboxes")
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 public class Inbox {
@@ -58,7 +58,7 @@ public class Inbox {
     )
     private List<Tag> tags = new ArrayList<>();
 
-    // ✅ Ensure defaults before persisting
+
     @PrePersist
     public void prePersist() {
         if (status == null) {
@@ -69,7 +69,6 @@ public class Inbox {
         }
     }
 
-    // --- Enums ---
     public enum Priority {
         LOW,
         MEDIUM,

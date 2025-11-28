@@ -27,15 +27,15 @@ public class InboxUpdateRequest {
 
     @Enumerated(EnumType.STRING)
     @NotNull(message = "Priority is required")
-    private Inbox.Priority priority;   // ✅ enum, consistent with domain
+    private Inbox.Priority priority;
 
-    private Inbox.Status status;       // ✅ drives lifecycle changes (startDate/completedDate auto-filled in service)
+    private Inbox.Status status;
 
     private Long projectId;
-    private String projectName;        // ✅ hybrid resolution: either ID or name
+    private String projectName;
 
     private Long contextId;
-    private String contextName;        // ✅ hybrid resolution: either ID or name
+    private String contextName;
 
     private List<String> tags;
 }

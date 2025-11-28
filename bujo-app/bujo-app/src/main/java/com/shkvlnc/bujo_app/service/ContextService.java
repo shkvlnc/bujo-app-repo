@@ -19,7 +19,7 @@ public class ContextService {
 
     public List<ContextResponse> listAll() {
         return contextRepo.findAll().stream()
-                .map(ContextResponse::fromEntity) // ✅ consistent DTO mapping
+                .map(ContextResponse::fromEntity) 
                 .toList();
     }
 

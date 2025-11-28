@@ -19,7 +19,7 @@ public class ProjectService {
 
     public List<ProjectResponse> listAll() {
         return projectRepo.findAll().stream()
-                .map(ProjectResponse::fromEntity) // ✅ consistent DTO mapping
+                .map(ProjectResponse::fromEntity)
                 .toList();
     }
 

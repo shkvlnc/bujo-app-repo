@@ -115,7 +115,6 @@ public class InboxService {
         inboxRepo.deleteById(id);
     }
 
-    // ✅ Push search logic into repository for efficiency
     public List<InboxResponse> search(String keyword, String tag, Inbox.Status status,
                                       Long contextId, Long projectId) {
         return inboxRepo.search(keyword, tag, status, contextId, projectId)
@@ -123,8 +122,6 @@ public class InboxService {
                 .map(InboxResponse::fromEntity)
                 .toList();
     }
-
-    // --- Helper methods ---
 
     private void applyCreateRequest(Inbox inbox, InboxCreateRequest req) {
         inbox.setTitle(req.getTitle());
@@ -134,7 +131,6 @@ public class InboxService {
         inbox.setStatus(req.getStatus() != null ? req.getStatus() : Inbox.Status.PENDING);
         inbox.setTags(resolveTags(req.getTags()));
 
-        // ✅ Require existing project/context by ID
         if (req.getProjectId() != null) {
             Project project = projectRepo.findById(req.getProjectId())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -149,7 +145,6 @@ public class InboxService {
             inbox.setContext(context);
         }
 
-        // ✅ Lifecycle handling
         if (req.getStatus() == Inbox.Status.IN_PROGRESS) {
             inbox.setStartDate(LocalDate.now());
         }
@@ -157,7 +152,6 @@ public class InboxService {
             inbox.setCompletedDate(LocalDate.now());
         }
     }
-
 
 
     private void applyUpdateRequest(Inbox inbox, InboxUpdateRequest req) {
@@ -168,7 +162,6 @@ public class InboxService {
         inbox.setStatus(req.getStatus());
         inbox.setTags(resolveTags(req.getTags()));
 
-        // ✅ Hybrid project resolution via helper
         if (req.getProjectId() != null) {
             Project project = projectRepo.findById(req.getProjectId())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -187,7 +180,6 @@ public class InboxService {
             inbox.setContext(null);
         }
 
-        // ✅ Lifecycle handling
         if (req.getStatus() == Inbox.Status.IN_PROGRESS && inbox.getStartDate() == null) {
             inbox.setStartDate(LocalDate.now());
         }
@@ -195,7 +187,6 @@ public class InboxService {
             inbox.setCompletedDate(LocalDate.now());
         }
     }
-
 
     private List<Tag> resolveTags(List<String> tagNames) {
         if (tagNames == null || tagNames.isEmpty()) return List.of();
@@ -242,10 +233,8 @@ public class InboxService {
 
     private Comparator<InboxResponse> taskOrder() {
         return Comparator
-                // 1. Status: PENDING before DONE
                 .comparing(InboxResponse::getStatus, Comparator.comparing(
                         status -> status == Inbox.Status.PENDING ? 0 : 1))
-                // 2. Priority: CRITICAL → URGENT → HIGH → MEDIUM → LOW
                 .thenComparing(InboxResponse::getPriority, Comparator.comparingInt(priority -> {
                     return switch (priority) {
                         case CRITICAL -> 5;
@@ -256,13 +245,9 @@ public class InboxService {
                         default       -> 0;
                     };
                 }).reversed())
-                // 3. Due date: earliest first
                 .thenComparing(InboxResponse::getDueDate, Comparator.nullsLast(Comparator.naturalOrder()))
-                // 4. Context name: alphabetical
                 .thenComparing(InboxResponse::getContextName, Comparator.nullsLast(String::compareToIgnoreCase))
-                // 5. Project name: alphabetical
                 .thenComparing(InboxResponse::getProjectName, Comparator.nullsLast(String::compareToIgnoreCase))
-                // 6. Title: alphabetical fallback
                 .thenComparing(InboxResponse::getTitle, String::compareToIgnoreCase);
     }
 }

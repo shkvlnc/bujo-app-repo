@@ -8,7 +8,7 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.shkvlnc.bujo_app.domain.Inbox; // ✅ reuse enums from entity
+import com.shkvlnc.bujo_app.domain.Inbox;
 
 @Getter @Setter
 public class InboxCreateRequest {
@@ -24,13 +24,12 @@ public class InboxCreateRequest {
 
     private Inbox.Priority priority;
 
-    private Inbox.Status status = Inbox.Status.PENDING; // ✅ default value
+    private Inbox.Status status = Inbox.Status.PENDING;
 
     @Schema(description = "Optional. If you don’t want tags, just omit this field or send an empty array []")
     @Size(max = 10, message = "You can assign up to 10 tags")
     private List<String> tags;
 
-    // ✅ ID-only references
     private Long projectId;
     private Long contextId;
 
