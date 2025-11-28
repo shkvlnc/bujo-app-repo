@@ -56,7 +56,10 @@ public List<InboxResponse> list() {
     public List<InboxResponse> search(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String tag,
-            @RequestParam(required = false) Inbox.Status status) {
-        return inboxService.search(keyword, tag, status);
+            @RequestParam(required = false) Inbox.Status status,
+            @RequestParam(required = false) Long contextId,
+            @RequestParam(required = false) Long projectId) {
+        return inboxService.search(keyword, tag, status, contextId, projectId);
     }
+
 }

@@ -116,13 +116,10 @@ public class InboxService {
     }
 
     // ✅ Push search logic into repository for efficiency
-    public List<InboxResponse> search(String keyword, String tag, Inbox.Status status) {
-        List<Inbox> results = inboxRepo.findAll(); // could be optimized with custom queries
-        return results.stream()
-                .filter(inbox -> keyword == null || inbox.getTitle().toLowerCase().contains(keyword.toLowerCase()))
-                .filter(inbox -> tag == null || inbox.getTags().stream()
-                        .anyMatch(t -> t.getName().equalsIgnoreCase(tag)))
-                .filter(inbox -> status == null || inbox.getStatus() == status)
+    public List<InboxResponse> search(String keyword, String tag, Inbox.Status status,
+                                      Long contextId, Long projectId) {
+        return inboxRepo.search(keyword, tag, status, contextId, projectId)
+                .stream()
                 .map(InboxResponse::fromEntity)
                 .toList();
     }
