@@ -56,18 +56,11 @@ public class TagService {
         tagRepo.deleteById(id);
     }
 
-    public List<InboxResponse> getInboxesByTagName(String name) {
-        Tag tag = tagRepo.findByNameIgnoreCase(name)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tag not found: " + name));
+    public List<InboxResponse> getInboxesByTagId(Long id) {
+        Tag tag = tagRepo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tag not found: " + id));
         return tag.getInboxes().stream()
                 .map(InboxResponse::fromEntity) // ✅ convert entity → DTO
-                .toList();
-    }
-
-
-    public List<TagResponse> getTagsByTagName(String name) {
-        return tagRepo.findByNameContainingIgnoreCase(name).stream()
-                .map(TagResponse::fromEntity)
                 .toList();
     }
 

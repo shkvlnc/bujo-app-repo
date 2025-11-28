@@ -54,8 +54,8 @@ public class TagController {
     }
 
     // ✅ GET inboxes linked to a tag by name
-    @GetMapping("/{name}/inboxes")
-    public List<InboxResponse> listInboxesByTagName(@PathVariable String name) {
-        return tagService.getInboxesByTagName(name);
+    @GetMapping("/{id}/inboxes")
+    public List<InboxResponse> listInboxesByTagId(@PathVariable Long id) {
+        return tagService.getInboxesByTagId(id);
     }
 }
