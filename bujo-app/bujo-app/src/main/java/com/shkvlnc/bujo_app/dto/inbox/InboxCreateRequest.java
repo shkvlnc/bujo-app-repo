@@ -31,4 +31,5 @@ public class InboxCreateRequest {
     // ✅ ID-only references
     private Long projectId;
     private Long contextId;
+
 }

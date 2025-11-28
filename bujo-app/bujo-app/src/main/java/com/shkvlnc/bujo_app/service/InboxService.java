@@ -137,20 +137,30 @@ public class InboxService {
         inbox.setStatus(req.getStatus() != null ? req.getStatus() : Inbox.Status.PENDING);
         inbox.setTags(resolveTags(req.getTags()));
 
+        // ✅ Require existing project/context by ID
         if (req.getProjectId() != null) {
             Project project = projectRepo.findById(req.getProjectId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                            "Project not found with id: " + req.getProjectId()));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "Project not found. Please create the project first."));
             inbox.setProject(project);
         }
 
         if (req.getContextId() != null) {
             Context context = contextRepo.findById(req.getContextId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                            "Context not found with id: " + req.getContextId()));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "Context not found. Please create the context first."));
             inbox.setContext(context);
         }
+
+        // ✅ Lifecycle handling
+        if (req.getStatus() == Inbox.Status.IN_PROGRESS) {
+            inbox.setStartDate(LocalDate.now());
+        }
+        if (req.getStatus() == Inbox.Status.DONE) {
+            inbox.setCompletedDate(LocalDate.now());
+        }
     }
+
 
 
     private void applyUpdateRequest(Inbox inbox, InboxUpdateRequest req) {
@@ -161,36 +171,34 @@ public class InboxService {
         inbox.setStatus(req.getStatus());
         inbox.setTags(resolveTags(req.getTags()));
 
-        // ✅ Hybrid project resolution
+        // ✅ Hybrid project resolution via helper
         if (req.getProjectId() != null) {
             Project project = projectRepo.findById(req.getProjectId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                            "Project not found with id: " + req.getProjectId()));
-            inbox.setProject(project);
-        } else if (req.getProjectName() != null) {
-            Project project = projectRepo.findByNameIgnoreCase(req.getProjectName())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                            "Project not found with name: " + req.getProjectName()));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "Project not found. Please create the project first."));
             inbox.setProject(project);
         } else {
             inbox.setProject(null);
         }
 
-        // ✅ Hybrid context resolution
         if (req.getContextId() != null) {
             Context context = contextRepo.findById(req.getContextId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                            "Context not found with id: " + req.getContextId()));
-            inbox.setContext(context);
-        } else if (req.getContextName() != null) {
-            Context context = contextRepo.findByNameIgnoreCase(req.getContextName())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                            "Context not found with name: " + req.getContextName()));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "Context not found. Please create the context first."));
             inbox.setContext(context);
         } else {
             inbox.setContext(null);
         }
+
+        // ✅ Lifecycle handling
+        if (req.getStatus() == Inbox.Status.IN_PROGRESS && inbox.getStartDate() == null) {
+            inbox.setStartDate(LocalDate.now());
+        }
+        if (req.getStatus() == Inbox.Status.DONE && inbox.getCompletedDate() == null) {
+            inbox.setCompletedDate(LocalDate.now());
+        }
     }
+
 
     private List<Tag> resolveTags(List<String> tagNames) {
         if (tagNames == null || tagNames.isEmpty()) return List.of();
@@ -209,6 +217,31 @@ public class InboxService {
                 .toList();
     }
 
+    private Project resolveProject(Long projectId, String projectName) {
+        if (projectId != null) {
+            return projectRepo.findById(projectId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "Project not found. Please create the project first."));
+        } else if (projectName != null) {
+            return projectRepo.findByNameIgnoreCase(projectName)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "Project not found. Please create the project first."));
+        }
+        return null;
+    }
+
+    private Context resolveContext(Long contextId, String contextName) {
+        if (contextId != null) {
+            return contextRepo.findById(contextId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "Context not found. Please create the context first."));
+        } else if (contextName != null) {
+            return contextRepo.findByNameIgnoreCase(contextName)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "Context not found. Please create the context first."));
+        }
+        return null;
+    }
 
     private Comparator<InboxResponse> taskOrder() {
         return Comparator
