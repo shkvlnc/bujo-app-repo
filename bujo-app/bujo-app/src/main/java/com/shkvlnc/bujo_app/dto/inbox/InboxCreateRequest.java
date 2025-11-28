@@ -1,5 +1,6 @@
 package com.shkvlnc.bujo_app.dto.inbox;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,6 +26,7 @@ public class InboxCreateRequest {
 
     private Inbox.Status status = Inbox.Status.PENDING; // ✅ default value
 
+    @Schema(description = "Optional. If you don’t want tags, just omit this field or send an empty array []")
     @Size(max = 10, message = "You can assign up to 10 tags")
     private List<String> tags;
 

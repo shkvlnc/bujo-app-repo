@@ -17,6 +17,10 @@ import java.util.List;
 public class ProjectController {
     private final ProjectService projectService;
 
+//    public ProjectController(ProjectService projectService) {
+//        this.projectService = projectService;
+//    }
+
     // ✅ GET all projects
     @GetMapping
     public List<ProjectResponse> list() {
