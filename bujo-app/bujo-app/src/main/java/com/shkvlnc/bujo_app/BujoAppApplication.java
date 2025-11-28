@@ -9,5 +9,4 @@ public class BujoAppApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(BujoAppApplication.class, args);
 	}
-
 }
